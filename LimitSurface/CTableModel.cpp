@@ -29,8 +29,10 @@ int CTableModel::rowCount(const QModelIndex& parent) const
 {
 	int nCount;
 	/*如果为超级表，这里判断一下超级表所有行数*/
-	
-	nCount = CTaos::m_MeasMapTNtoList[CGlobal::m_treeName].count();
+	if (CGlobal::m_TreeType == 1)
+		nCount = CTaos::m_MeasTagMapSTNtoList[CGlobal::m_treeName].count();
+	else if(CGlobal::m_TreeType == 2)
+		nCount = CTaos::m_MeasMapTNtoList[CGlobal::m_treeName].count();
 
 	return nCount;
 }
@@ -47,6 +49,7 @@ int CTableModel::columnCount(const QModelIndex& parent) const
 
 QVariant CTableModel::data(const QModelIndex& index, int role) const
 {
+	
 
 	//用收到的数据显示
 	switch(role)
@@ -60,20 +63,29 @@ QVariant CTableModel::data(const QModelIndex& index, int role) const
 			{
 			case 0:
 				{
+				if (CGlobal::m_TreeType == 1)
+					return CTaos::m_MeasTagMapSTNtoList[CGlobal::m_treeName][nRow]->m_tbname;
+				else if(CGlobal::m_TreeType == 2)
 					return CTaos::m_MeasMapTNtoList[CGlobal::m_treeName][nRow]->m_date;
 				}
 			case 1:
 				{
+				if (CGlobal::m_TreeType == 1)
+					return CTaos::m_MeasTagMapSTNtoList[CGlobal::m_treeName][nRow]->m_meas_name;
+				else if (CGlobal::m_TreeType == 2)
 					return CTaos::m_MeasMapTNtoList[CGlobal::m_treeName][nRow]->m_value;
 				}
 			case 2:
 				{
-					return CTaos::m_MeasMapTNtoList[CGlobal::m_treeName][nRow]->m_Smeas_name_TAG;
+				if (CGlobal::m_TreeType == 1)
+					return CTaos::m_MeasTagMapSTNtoList[CGlobal::m_treeName][nRow]->m_meas_type;
+				else if (CGlobal::m_TreeType == 2)
+					return 0;
 				}
 			break;
 			case 3:
 				{
-					return CTaos::m_MeasMapTNtoList[CGlobal::m_treeName][nRow]->m_Smeas_type_TAG;
+					return 0;
 				}
 				break;
 			default:

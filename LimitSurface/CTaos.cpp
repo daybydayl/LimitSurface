@@ -8,6 +8,9 @@
 CTaos* CTaos::m_pCTaos = 0;
 TAOS* CTaos::m_taos = 0;
 
+QList<CTaosMeasTag*>	CTaos::m_listMeasTagNode;
+QMap<QString, QList<CTaosMeasTag*>>	CTaos::m_MeasTagMapSTNtoList;
+
 QList<CTaosMeasTable*>	CTaos::m_listMeasTableNode;
 QMap<QString, QList<CTaosMeasTable*>>	CTaos::m_MeasMapTNtoList;
 QMap<QString, QMap<QString, QList<CTaosMeasTable*>>> CTaos::m_MeasMapSTNtoList;
@@ -54,6 +57,7 @@ void CTaos::Init()
 	CommonExeDB();
 	//SynReadTable();
 
+	//读出表目录
 	ReadSTTree();
 
 	/*if (1 == CGlobal::m_TreeType)
@@ -236,39 +240,25 @@ void CTaos::TableDirectQueryData()
 
 void CTaos::STableDirectQueryData()
 {
-	CTaosMeasTable::resetMeasPool();//清楚对象池
-	m_listMeasTableNode.clear();//单个子表链表数据清空
-	m_MeasMapTNtoList[CGlobal::m_treeName].clear();//map子表集链表清空
-	CCustomPlot::m_Xtime.clear();
-	CCustomPlot::m_Yvalue.clear();
+	CTaosMeasTag::resetMeasTAGPool();//清楚对象池
+	m_listMeasTagNode.clear();//单个子表链表数据清空
+	m_MeasTagMapSTNtoList[CGlobal::m_treeName].clear();//map子表集链表清空
 
 	TAOS_RES* res = NULL;								//查询的结果集
 	TAOS_ROW data_row = NULL;							//一条记录的结果数据
 	int records_num = 0;								//查询结果的记录条数
-	QString str = "select * from rr6000.";
+	QString str = "show table tags from rr6000.";
 	str.append(CGlobal::m_treeName);
-	str.append(" limit 10000");
 
 	res = taos_query(m_taos, str.toStdString().c_str());
 
 	int fields_num = taos_field_count(res);				//查询表的域个数，等同taos_num_fields
 	TAOS_FIELD* taosfields_info = taos_fetch_fields(res);		//域结构信息
 
-	//返回结果集时间戳字段的精度，0 代表毫秒，1 代表微秒，2 代表纳秒。
-	int time_pre = taos_result_precision(res);
-
-	//字串截取
 	QString subchar;
 	char split = ' ';
-	
-	//将毫秒转成时间
-	char curDate[64];
-	time_t curtime;
-	struct tm* tminfo;//C++自带
-	QString Smilli;
 
-
-	CTaosMeasTable* pTaosMeasTable;//接收转换后的类数据
+	CTaosMeasTag* pTaosMeasTAG;//接收转换后的类数据
 
 	double pointnum = 0;
 	while ((data_row = taos_fetch_row(res))) {				//按行获取查询结果集中的数据。
@@ -276,52 +266,29 @@ void CTaos::STableDirectQueryData()
 		taos_print_row(temp, data_row, taosfields_info, fields_num);	//官方解析一条记录输出
 		records_num++;
 
-		pTaosMeasTable = CTaosMeasTable::getMeasNodebyPool();
+		pTaosMeasTAG = CTaosMeasTag::getMeasTAGNodebyPool();
 
 		subchar = strtok(temp, &split);//字串截取
-		Smilli = QString::number(subchar.toLongLong() % 1000);//取毫秒字符串
-		curtime = subchar.toLongLong() / 1000;
-		tminfo = localtime(&curtime);//将的得到时间转成结构体tm类型
-		strftime(curDate, 64, "%Y-%m-%d %H:%M:%S", tminfo);//把tm结构体已模型放入字符串中
-		pTaosMeasTable->m_date.append(curDate);//日期字串
-		pTaosMeasTable->m_date.append(".");
-		pTaosMeasTable->m_date.append(Smilli);//毫秒字串
+
+		pTaosMeasTAG->m_tbname = subchar;
 
 		subchar = strtok(NULL, &split);
-		pTaosMeasTable->m_value = subchar.toDouble();//量测值
+		pTaosMeasTAG->m_meas_name = subchar;
 
 		subchar = strtok(NULL, &split);
-		pTaosMeasTable->m_Smeas_name_TAG = subchar;//tag
-
-		subchar = strtok(NULL, &split);
-		pTaosMeasTable->m_Smeas_type_TAG = subchar.toInt();
+		pTaosMeasTAG->m_meas_type = subchar.toInt();
 
 
 		//看该有无该记录的子表链表map，有就append
-		if (m_MeasMapTNtoList.contains(pTaosMeasTable->m_Smeas_name_TAG))
-		{
-			m_MeasMapTNtoList[pTaosMeasTable->m_Smeas_name_TAG].append(pTaosMeasTable);
-			CItemTree* pItemTree = CTreeModel::getItemTreebyPool();
-			pItemTree->m_TreeName = pTaosMeasTable->m_Smeas_name_TAG;
-			pItemTree->m_TreeType = 2;
-			CTreeModel::m_listTree.append(pItemTree);
-		}
+		if (m_MeasTagMapSTNtoList.contains(CGlobal::m_treeName))
+			m_MeasTagMapSTNtoList[CGlobal::m_treeName].append(pTaosMeasTAG);
 		else
 		{
 			//若无就先清链表再开始添入，再把链表放入子表map
-			m_listMeasTableNode.clear();
-			m_listMeasTableNode.append(pTaosMeasTable);
-			m_MeasMapTNtoList.insert(pTaosMeasTable->m_Smeas_name_TAG, m_listMeasTableNode);
+			m_listMeasTagNode.clear();
+			m_listMeasTagNode.append(pTaosMeasTAG);
+			m_MeasTagMapSTNtoList.insert(CGlobal::m_treeName, m_listMeasTagNode);
 		}
-
-		//如果超级表map里没有该st的子集就插入
-		if (!m_MeasMapSTNtoList.contains(CGlobal::m_treeName))
-			m_MeasMapSTNtoList.insert(CGlobal::m_treeName, m_MeasMapTNtoList);
-
-		//Customplot，给数据线填数据
-		//CCustomPlot::m_Xtime.push_back(pointnum++);
-		//CCustomPlot::m_Xtime.push_back(pTaosMeasTable->m_date.toDouble());
-		CCustomPlot::m_Yvalue.push_back(pTaosMeasTable->m_value);
 
 	}
 	
@@ -461,34 +428,67 @@ void CTaos::test()
 
 void CTaos::ReadSTTree()
 {
-	TAOS_RES* res = NULL;								//查询的结果集
-	TAOS_ROW data_row = NULL;							//一条记录的结果数据
-	int records_num = 0;								//查询结果的记录条数
-	QString str = "show rr6000.stables";
+	//定义建立超表目录的接收信息
+	TAOS_RES* resST = NULL;								//查询的结果集
+	TAOS_ROW data_rowST = NULL;							//一条记录的结果数据
+	int fields_numST = 0;								//查询表的域个数，等同taos_num_fields
+	TAOS_FIELD* taosfields_infoST = NULL;						//域结构信息
 
-	res = taos_query(m_taos, str.toStdString().c_str());
+	//定义超表下子表目录的接收信息
+	TAOS_RES* resT = NULL;								//查询的结果集
+	TAOS_ROW data_rowT = NULL;							//一条记录的结果数据
+	int fields_numT = 0;								//查询表的域个数，等同taos_num_fields
+	TAOS_FIELD* taosfields_infoT = NULL;						//域结构信息
+	
 
-	int fields_num = taos_field_count(res);				//查询表的域个数，等同taos_num_fields
-	TAOS_FIELD* taosfields_info = taos_fetch_fields(res);		//域结构信息
+	//组装查超表的sql语句
+	QString strST = "show rr6000.stables";
+	resST = taos_query(m_taos, strST.toStdString().c_str());
+	fields_numST = taos_field_count(resST);				//查询表的域个数，等同taos_num_fields
+	taosfields_infoST = taos_fetch_fields(resST);		//域结构信息
 
-
-	while ((data_row = taos_fetch_row(res))) {				//按行获取查询结果集中的数据。
-		char temp[1024] = { 0 };
-		taos_print_row(temp, data_row, taosfields_info, fields_num);	//官方解析一条记录输出
-		records_num++;
-
+	while ((data_rowST = taos_fetch_row(resST))) {				//按行获取查询结果集中的数据。
+		char tempST[64] = { 0 };
+		taos_print_row(tempST, data_rowST, taosfields_infoST, fields_numST);	//官方解析一条记录输出
+		//读超表名来建一级目录
 		CItemTree* pItemTree = CTreeModel::getItemTreebyPool();
-		
-		pItemTree->m_TreeName = temp;
-		pItemTree->m_TreeType = 1;
+		pItemTree->m_TreeName = tempST;
+		pItemTree->m_TreeType = 1;//标记为超级表类型
+		//pItemTree->m_TreeId = 1;
 		CTreeModel::m_listSTree.append(pItemTree);
+
+		//通过收到的超表名再来获取子表目录
+		QString strT = "show table tags tbname from rr6000.";
+		strT.append(tempST);
+		resT = taos_query(m_taos, strT.toStdString().c_str());
+		fields_numT = taos_field_count(resT);			//查询表的域个数，等同taos_num_fields
+		taosfields_infoT = taos_fetch_fields(resT);		//域结构信息
+		while ((data_rowT = taos_fetch_row(resT))) {
+			char tempT[64] = { 0 };
+			taos_print_row(tempT, data_rowT, taosfields_infoT, fields_numT);	//官方解析一条记录输出
+			//读子表名来建二级目录
+			CItemTree* pItemTree = CTreeModel::getItemTreebyPool();
+			pItemTree->m_TreeName = tempT;
+			pItemTree->m_TreeType = 2;//标记为子表类型
+			//pItemTree->m_TreeId = 1;
+
+			if (CTreeModel::m_mapQStoQLTree.contains(QString(tempST)))
+				CTreeModel::m_mapQStoQLTree[QString(tempST)].append(pItemTree);
+			else
+			{
+				CTreeModel::m_listTree.clear();
+				CTreeModel::m_listTree.append(pItemTree);
+				CTreeModel::m_mapQStoQLTree.insert(QString(tempST), CTreeModel::m_listTree);
+			}
+		}
+
 	}
 
 }
 
 void CTaos::ReadTTree()
 {
-	CTreeModel::m_listTree.clear();
+	//CTreeModel::m_mapTree.clear();
 
 	TAOS_RES* res = NULL;								//查询的结果集
 	TAOS_ROW data_row = NULL;							//一条记录的结果数据
@@ -511,7 +511,7 @@ void CTaos::ReadTTree()
 
 		pItemTree->m_TreeName = temp;
 		pItemTree->m_TreeType = 2;
-		CTreeModel::m_listTree.append(pItemTree);
+		//CTreeModel::m_mapTree.append(pItemTree);
 	}
 
 }

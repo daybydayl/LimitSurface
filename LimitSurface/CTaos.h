@@ -1,6 +1,7 @@
 #pragma once
 #include "CCommonHead.h"
 #include "CTaosMeasTable.h"
+#include "CTaosMeasTag.h"
 #include "CGlobal.h"
 
 #include "CCustomPlot.h"
@@ -26,7 +27,7 @@ public:
 
 	void TableDirectQueryData();//直接读子表
 
-	void STableDirectQueryData();//读超级表会直接把所有子表都拿出存好，之后子表不需要读
+	void STableDirectQueryData();//读超级表tag
 
 	void test();
 
@@ -44,6 +45,11 @@ public:
 	static CTaos* m_pCTaos;							//单例指针
 	static TAOS* m_taos;							//声明成全局，方便跨文件使用
 
+	//超级表数据
+	static QList<CTaosMeasTag*>						m_listMeasTagNode;
+	static QMap<QString, QList<CTaosMeasTag*>>		m_MeasTagMapSTNtoList;
+
+	//子表数据
 	static QList<CTaosMeasTable*>					m_listMeasTableNode;//子表接收的数据
 	static QMap<QString, QList<CTaosMeasTable*>>	m_MeasMapTNtoList;//接收taos量测结点链表,子表名和数据
 	static QMap<QString, QMap<QString, QList<CTaosMeasTable*>>> m_MeasMapSTNtoList;//接收超级表命，子表名和数据

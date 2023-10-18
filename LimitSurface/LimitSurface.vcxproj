@@ -96,6 +96,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CTaosMeasTag.cpp" />
     <ClCompile Include="qcustomplot.cpp" />
     <QtRcc Include="CMainWindow.qrc" />
     <QtUic Include="CMainWindow.ui" />
@@ -120,6 +121,7 @@
     <ClInclude Include="CTableModel.h" />
     <ClInclude Include="CTaos.h" />
     <ClInclude Include="CTaosMeasTable.h" />
+    <ClInclude Include="CTaosMeasTag.h" />
     <ClInclude Include="CTreeModel.h" />
     <QtMoc Include="qcustomplot.h" />
   </ItemGroup>

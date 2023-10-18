@@ -2,7 +2,8 @@
 
 QList<CItemTree*>	CTreeModel::m_listPoolItemTree;
 QList<CItemTree*>	CTreeModel::m_listSTree;
-QList< CItemTree*>	CTreeModel::m_listTree;
+QList<CItemTree*>	CTreeModel::m_listTree;
+QMap<QString, QList<CItemTree*>>	CTreeModel::m_mapQStoQLTree;
 CTreeModel::CTreeModel(QObject* parent)
 {
     m_pItemRoot = new CItemTree();
@@ -23,31 +24,13 @@ void CTreeModel::setTreeData()
     {
         m_listSTree[i]->setParent(m_pItemRoot);
         m_pItemRoot->addChild(m_listSTree[i]);
-    }
-
-}
-void CTreeModel::addTTree()
-{
-    //reset();Qt4中的reset已不能用，这里下面两条可以达到一样的效果
-
-    //beginResetModel();
-    /*重置前想做的别的一些操作*/
-    //m_listSTree.clear();
-    for (int i = 0; i < m_listSTree.count(); i++)
-    {
-        if (m_listSTree[i]->m_TreeName == CGlobal::m_treeName)
+        for (int j = 0; j < m_mapQStoQLTree[m_listSTree[i]->m_TreeName].count(); j++)
         {
-            
-            for (int j = 0; j < m_listTree.count(); j++)
-            {
-                m_listTree[j]->setParent(m_listSTree[i]);
-                m_listSTree[i]->addChild(m_listTree[j]);
-            }
+            m_mapQStoQLTree[m_listSTree[i]->m_TreeName][j]->setParent(m_listSTree[i]);
+            m_listSTree[i]->addChild(m_mapQStoQLTree[m_listSTree[i]->m_TreeName][j]);
         }
     }
 
-
-    //endResetModel();
 }
 QModelIndex CTreeModel::index(int row, int column, const QModelIndex& parent) const
 {

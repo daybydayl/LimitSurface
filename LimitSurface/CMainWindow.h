@@ -25,7 +25,6 @@ public:
     void initComponent();//初始化界面布局和类对象
 
     void addPushButton();//添加1按钮
-
     void addTimeEdit();//添加时间区间编辑控件
 
 protected slots:
@@ -53,15 +52,17 @@ private:
     QSplitter* m_pSplitter;	//分束器
 
     CTaos* m_pTaos;//taos句柄
+    QSplitter* m_pHSplitterST;
+    QSplitter* m_pHSplitterT;
     //Qcustomplot
-    QSplitter* m_pSplitter1;	//分束器
+    QSplitter* m_pVSplitter1;	//分束器
     QSplitter* m_pSplitter2;	//分束器
     CCustomPlot* m_pCCustom;
 
     //添加按钮
     QWidget* m_pButtonContainer;
     QVBoxLayout* m_pVBoxLayot;//垂直布局的小部件
-    QSplitter* m_pSplitter3;
+    QSplitter* m_pHSplitter3;
     QPushButton* m_pPushButton1;//按钮1尝试
     QPushButton* m_pPushButton2;
 

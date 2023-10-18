@@ -16,10 +16,6 @@ CMainWindow::~CMainWindow()
 
 void CMainWindow::initComponent()
 {
-    //将定义的表模型放入表视图中，并且resize行列的宽度
-    m_pTableModel = new CTableModel(this);
-    m_pTableView = new QTableView(this);
-
     m_pTaos = CTaos::Intoinstance();
     m_pTaos->Init();//读出超表目录树
 
@@ -30,34 +26,43 @@ void CMainWindow::initComponent()
     m_pTreeView->setHeaderHidden(true);         //隐藏headerdata
     m_pTreeView->setModel(m_pTreeModel);
 
-
-    m_pCCustom = CCustomPlot::intoinstance();//通过自定义的对象获取QCustomPlot绘制
-    addPushButton();
-    //addTimeEdit();
-    m_pSplitter3 = new QSplitter(Qt::Horizontal, this);
-    m_pSplitter3->addWidget(m_pCCustom->m_pCustomPlot);
-    m_pSplitter3->addWidget(m_pButtonContainer);
-    m_pSplitter3->setStretchFactor(0, 7);				//设置视图比例，第0列和第1列是4:7
-    m_pSplitter3->setStretchFactor(1, 1);
-
-    //将定定义的表视图和树视图放入分束器中
-    m_pSplitter1 = new QSplitter(Qt::Vertical, this);	//分束器，两部分，这里水平
-    m_pSplitter1->addWidget(m_pTableView);
-    m_pSplitter1->addWidget(m_pSplitter3);
-    m_pSplitter1->setStretchFactor(0, 4);				//设置视图比例，第0列和第1列是4:7
-    m_pSplitter1->setStretchFactor(1, 6);
-
-    m_pSplitter2 = new QSplitter(Qt::Horizontal, this);	//分束器，两部分，这里水平
-    m_pSplitter2->addWidget(m_pTreeView);
-    m_pSplitter2->addWidget(m_pSplitter1);
-    m_pSplitter2->setStretchFactor(0, 2);				//设置视图比例，第0列和第1列是4:7
-    m_pSplitter2->setStretchFactor(1, 7);
-    setCentralWidget(m_pSplitter2);//设置到主窗口中央
-
     //树视图连接到startDo的槽，双击目录获取索引
     connect(m_pTreeView, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(startDo(const QModelIndex&)));	//信号连接槽函数
 
+
+
+    //Table,将定义的表模型放入表视图中，并且resize行列的宽度
+    m_pTableModel = new CTableModel(this);
+    m_pTableView = new QTableView(this);
+    m_pCCustom = CCustomPlot::intoinstance();//通过自定义的对象获取QCustomPlot绘制
+    
+    m_pSplitter = new QSplitter(Qt::Horizontal, this);
+    m_pVSplitter1 = new QSplitter(Qt::Vertical, this);	//分束器，两部分，这里水平
+    m_pHSplitter3 = new QSplitter(Qt::Horizontal, this);
+
+
+    addPushButton();
+    //addTimeEdit();
+    m_pHSplitter3->addWidget(m_pCCustom->m_pCustomPlot);
+    m_pHSplitter3->addWidget(m_pButtonContainer);
+    m_pHSplitter3->setStretchFactor(0, 7);				//设置视图比例，第0列和第1列是4:7
+    m_pHSplitter3->setStretchFactor(1, 1);
+
+    //将定定义的表视图和树视图放入分束器中
+    m_pVSplitter1->addWidget(m_pTableView);
+    m_pVSplitter1->addWidget(m_pHSplitter3);
+    m_pVSplitter1->setStretchFactor(0, 4);				//设置视图比例，第0列和第1列是4:7
+    m_pVSplitter1->setStretchFactor(1, 6);
+
+    m_pSplitter->addWidget(m_pTreeView);
+    m_pSplitter->addWidget(m_pVSplitter1);
+    m_pSplitter->setStretchFactor(0, 2);				//设置视图比例，第0列和第1列是4:7
+    m_pSplitter->setStretchFactor(1, 7);
+    setCentralWidget(m_pSplitter);//设置到主窗口中央
+
+
 }
+
 
 void CMainWindow::addPushButton()
 {
@@ -135,38 +140,26 @@ void CMainWindow::updateTracer(QMouseEvent* event)
 
 void CMainWindow::startDo(const QModelIndex& pQModel)
 {
+    //获取点击项的信息
     CItemTree* pItemTree;
     pItemTree = static_cast<CItemTree*>(pQModel.internalPointer());
     CGlobal::m_treeName = pItemTree->m_TreeName;
     CGlobal::m_TreeType = pItemTree->m_TreeType;
+    QStringList Listheader;
 
     if (pItemTree->m_TreeType == 1)
     {
         //如果是超级表,存ST所有子表数据，并建立子目录
-        m_pTaos->ReadTTree();
-        //m_pTaos->STableDirectQueryData();
-        m_pTreeModel->addTTree();
-        m_pTreeView->viewport()->update();
+        m_pHSplitter3->hide();
+        m_pTaos->STableDirectQueryData();
+        Listheader << QString("表名") << QString("量测名") << QString("类型");
     }
     else if (pItemTree->m_TreeType == 2)
     {
-        QStringList Listheader;
-        ////应 表头
-        //if (CGlobal::m_TreeType == 1)
-        //    Listheader << QString("时间戳") << QString("量测值") << QString("量测名") << QString("量测类型");
-        //else if (CGlobal::m_TreeType == 2)
-        //    Listheader << QString("时间戳") << QString("量测值");
-        Listheader << QString("时间戳") << QString("量测值");
-        m_pTableModel->setheader(Listheader);
-
+        m_pHSplitter3->show();
         m_pTaos->TableDirectQueryData();//读子表数据
-
-        m_pTableView->setModel(m_pTableModel);//表格模型放入视图
-        m_pTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);//自动设置列宽
-        //刷新窗口，只刷新修改的数据
-        //m_pTableView->viewport()->update();//Qt4版本，此版本不适用
-        m_pTableModel->hasChanged();
-
+        Listheader << QString("时间戳") << QString("量测值");
+        
 
         // 假设你的QCustomPlot对象名为customPlot
         m_tracer = new QCPItemTracer(m_pCCustom->m_pCustomPlot);
@@ -176,15 +169,16 @@ void CMainWindow::startDo(const QModelIndex& pQModel)
         m_textLabel->setPositionAlignment(Qt::AlignTop | Qt::AlignHCenter);
 
         connect(m_pCCustom->m_pCustomPlot, SIGNAL(mouseMove(QMouseEvent*)), this, SLOT(updateTracer(QMouseEvent*)));
-
-
-
-
-
         //自定义的类中绘制绘图所需图像
         m_pCCustom->Draw();
     }
 
+    m_pTableModel->setheader(Listheader);
+    m_pTableView->setModel(m_pTableModel);//表格模型放入视图
+    m_pTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);//自动设置列宽
+    //刷新窗口，只刷新修改的数据
+    //m_pTableView->viewport()->update();//Qt4版本，此版本不适用
+    m_pTableModel->hasChanged();
 
 
 }

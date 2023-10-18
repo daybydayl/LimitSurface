@@ -12,7 +12,6 @@ public:
 
 public:
 	void setTreeData();
-	void addTTree();
 
 public://重写继承函数
 	//在该目录下添加一行目录,返回索引
@@ -43,7 +42,8 @@ protected:
 
 public:
 	static QList<CItemTree*>	m_listSTree;			//存超级表树目录队列
-	static QList< CItemTree*>	m_listTree;				//存子表目录
+	static QList<CItemTree*>	m_listTree;				//存单个子表目录
+	static QMap<QString, QList<CItemTree*>>	m_mapQStoQLTree;			//存超级表下的子表目录
 
 	QStringList	m_listheader;
 private:
