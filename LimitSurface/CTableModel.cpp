@@ -126,3 +126,62 @@ QVariant CTableModel::headerData(int section, Qt::Orientation orientation, int r
 
 	return QVariant();
 }
+
+bool CTableModel::setData(const QModelIndex& index, const QVariant& value, int role)
+{
+	/*===================反填函数需要时应该接到回填内存的地方=======================*/
+	int      nRow    = 0;
+	int      nCol    = 0;
+	CTaosMeasTag* pTaosMeasTag = NULL;
+	
+
+	nRow = index.row();
+	nCol = index.column();
+
+	pTaosMeasTag = CTaos::m_MeasTagMapSTNtoList[CGlobal::m_treeName][nRow];
+
+	if(0 == pTaosMeasTag)
+	{
+		return false;
+	}
+
+	switch(nCol)
+	{
+	case 0:
+		{
+			pTaosMeasTag->m_tbname = value.toString();
+		}
+		break;
+
+	case 1:
+		{
+			int nValue = 0;
+			nValue = value.toInt();
+			//pNodeSw->m_chValue = (char)nValue;
+			pTaosMeasTag->m_meas_name = value.toString();
+		}
+		break;
+	case 2:
+		{
+			pTaosMeasTag->m_meas_type = value.toInt();
+		}
+		break;
+
+	default:
+		break;
+	}
+
+	return true;
+}
+
+Qt::ItemFlags CTableModel::flags(const QModelIndex& index) const
+{
+	Qt::ItemFlags defaultFlags = QAbstractItemModel::flags(index);
+
+	if (index.isValid())
+	{
+		return defaultFlags | Qt::ItemIsEditable | Qt::ItemIsEnabled;
+	}
+
+	return defaultFlags;
+}
