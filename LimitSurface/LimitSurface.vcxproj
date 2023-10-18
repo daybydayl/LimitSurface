@@ -96,6 +96,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CDelegateEdit.cpp" />
     <ClCompile Include="CTaosMeasTag.cpp" />
     <ClCompile Include="qcustomplot.cpp" />
     <QtRcc Include="CMainWindow.qrc" />
@@ -116,6 +117,7 @@
   <ItemGroup>
     <ClInclude Include="CCommonHead.h" />
     <ClInclude Include="CCustomPlot.h" />
+    <ClInclude Include="CDelegateEdit.h" />
     <ClInclude Include="CGlobal.h" />
     <ClInclude Include="CItemTree.h" />
     <ClInclude Include="CTableModel.h" />
