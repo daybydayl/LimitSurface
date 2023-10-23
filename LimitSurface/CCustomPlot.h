@@ -1,4 +1,6 @@
 #pragma once
+#ifndef CCUSTOMPLOT_H
+#define CCUSTOMPLOT_H
 #include "qcustomplot.h"
 #include "CCommonHead.h"
 class CCustomPlot
@@ -23,4 +25,5 @@ public:
 private:
 	static CCustomPlot*		m_pCCustomPlot;	//自定义取画布的类
 };
+#endif
 
