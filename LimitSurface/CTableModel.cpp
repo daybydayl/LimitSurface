@@ -20,11 +20,6 @@ void CTableModel::hasChanged()
 	endResetModel();
 }
 
-void CTableModel::setheader(QStringList	&Listheader)
-{
-	m_Listheader = Listheader;
-}
-
 void CTableModel::SetHeader()
 {
 	m_Listheader.clear();

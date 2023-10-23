@@ -14,7 +14,6 @@ public:
 
 public:
 	void hasChanged();
-	void setheader(QStringList &);
 	void SetHeader();
 
 	//表格方式的行列
