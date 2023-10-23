@@ -19,7 +19,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4EF8622D-3463-477E-95C1-E39978193DF1}</ProjectGuid>
     <Keyword>QtVS_v304</Keyword>
-    <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">10.0.22000.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">10.0.19041.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">10.0.22000.0</WindowsTargetPlatformVersion>
     <QtMsBuild Condition="'$(QtMsBuild)'=='' OR !Exists('$(QtMsBuild)\qt.targets')">$(MSBuildProjectDirectory)\QtMsBuild</QtMsBuild>
   </PropertyGroup>
@@ -97,11 +97,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CTaosMeasTag.cpp" />
-    <ClCompile Include="qcustomplot.cpp" />
     <QtRcc Include="CMainWindow.qrc" />
     <QtUic Include="CMainWindow.ui" />
     <QtMoc Include="CMainWindow.h" />
-    <ClCompile Include="CCustomPlot.cpp" />
     <ClCompile Include="CGlobal.cpp" />
     <ClCompile Include="CItemTree.cpp" />
     <ClCompile Include="CMainWindow.cpp" />
@@ -115,7 +113,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CCommonHead.h" />
-    <ClInclude Include="CCustomPlot.h" />
     <ClInclude Include="CGlobal.h" />
     <ClInclude Include="CItemTree.h" />
     <ClInclude Include="CTableModel.h" />
@@ -123,7 +120,6 @@
     <ClInclude Include="CTaosMeasTable.h" />
     <ClInclude Include="CTaosMeasTag.h" />
     <ClInclude Include="CTreeModel.h" />
-    <QtMoc Include="qcustomplot.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

@@ -11,7 +11,6 @@
 #include "CTreeModel.h"
 #include "CItemTree.h"
 
-#include "CCustomPlot.h"
 
 class CMainWindow : public QMainWindow
 {
@@ -52,27 +51,5 @@ private:
     QSplitter* m_pSplitter;	//分束器
 
     CTaos* m_pTaos;//taos句柄
-    QSplitter* m_pHSplitterST;
-    QSplitter* m_pHSplitterT;
-    //Qcustomplot
-    QSplitter* m_pVSplitter1;	//分束器
-    QSplitter* m_pSplitter2;	//分束器
-    CCustomPlot* m_pCCustom;
-
-    //添加按钮
-    QWidget* m_pButtonContainer;
-    QVBoxLayout* m_pVBoxLayot;//垂直布局的小部件
-    QSplitter* m_pHSplitter3;
-    QPushButton* m_pPushButton1;//按钮1尝试
-    QPushButton* m_pPushButton2;
-
-    //添加时间区间
-    QDateTimeEdit* m_startTimeEdit;
-    QDateTimeEdit* m_endTimeEdit;
-
-    //鼠标移动
-    QCPItemTracer* m_tracer;
-    QCPItemText* m_textLabel;
-
 
 };

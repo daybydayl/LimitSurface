@@ -4,7 +4,6 @@
 #include "CTaosMeasTag.h"
 #include "CGlobal.h"
 
-#include "CCustomPlot.h"
 
 class CTaos
 {

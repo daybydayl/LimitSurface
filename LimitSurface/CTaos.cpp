@@ -60,12 +60,6 @@ void CTaos::Init()
 	//¶Á³ö±íÄ¿Â¼
 	ReadSTTree();
 
-	/*if (1 == CGlobal::m_TreeType)
-		STableDirectQueryData();
-	else if(2 == CGlobal::m_TreeType)
-		TableDirectQueryData();*/
-	//test();
-
 
 
 
