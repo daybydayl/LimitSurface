@@ -46,9 +46,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CCustomPlot.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CGlobal.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -67,21 +64,18 @@
     <ClCompile Include="CTreeModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="qcustomplot.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CDelegateEdit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CTaosMeasTag.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CChartView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CCommonHead.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CCustomPlot.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CGlobal.h">
@@ -110,7 +104,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="qcustomplot.h">
+    <QtMoc Include="CChartView.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

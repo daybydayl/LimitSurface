@@ -25,6 +25,16 @@ void CTableModel::setheader(QStringList	&Listheader)
 	m_Listheader = Listheader;
 }
 
+void CTableModel::SetHeader()
+{
+	m_Listheader.clear();
+
+	if(1 == CGlobal::m_TreeType)
+		m_Listheader << QString("表名") << QString("量测名") << QString("类型");
+	else if(2 == CGlobal::m_TreeType)
+		m_Listheader << QString("时间戳") << QString("量测值");
+}
+
 int CTableModel::rowCount(const QModelIndex& parent) const
 {
 	int nCount;

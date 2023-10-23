@@ -1,11 +1,5 @@
 #include "CGlobal.h"
 
-////声明网络对象
-//extern system_net_info dnet_obj;
-////声明历史库访问对象
-//extern HAccess hds_obj;
-////声明实时库访问对象
-//extern RDB_NET rdb_net;
 
 CGlobal* CGlobal::m_pGlobal = 0;
 

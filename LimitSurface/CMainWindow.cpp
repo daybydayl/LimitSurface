@@ -2,6 +2,8 @@
 #include "CItemTree.h"
 #include "CGlobal.h"
 
+#include <QHeaderView>
+
 
 CMainWindow::CMainWindow(QWidget* parent)
     : QMainWindow(parent)
@@ -34,151 +36,78 @@ void CMainWindow::initComponent()
     //Table,将定义的表模型放入表视图中，并且resize行列的宽度
     m_pTableModel = new CTableModel(this);
     m_pTableView = new QTableView(this);
-    m_pCCustom = CCustomPlot::intoinstance();//通过自定义的对象获取QCustomPlot绘制
+    m_pTableView->setModel(m_pTableModel);//表格模型放入视图
+    m_pChart = new QChart();
+    m_pLineseries = new QLineSeries();
+    //将图表绑定到视图ChartView
+    m_pChartView = new CChartView(m_pChart);
+    /*m_pChartView = new QChartView();//原本的直接方式
+    m_pChartView->setChart(m_pChart);*/
     
     m_pSplitter = new QSplitter(Qt::Horizontal, this);
     m_pVSplitter1 = new QSplitter(Qt::Vertical, this);	//分束器，两部分，这里水平
-    m_pHSplitter3 = new QSplitter(Qt::Horizontal, this);
 
+    //右边分束器上下给表和图
+    m_pVSplitter1->addWidget(m_pTableView);
+    m_pVSplitter1->addWidget(m_pChartView);
+    m_pVSplitter1->setStretchFactor(0, 1);				//设置视图比例，第0列和第1列是4:7
+    m_pVSplitter1->setStretchFactor(1, 8);
 
-    addPushButton();
-    //addTimeEdit();
-    m_pHSplitter3->addWidget(m_pCCustom->m_pCustomPlot);
-    m_pHSplitter3->addWidget(m_pButtonContainer);
-    m_pHSplitter3->setStretchFactor(0, 7);				//设置视图比例，第0列和第1列是4:7
-    m_pHSplitter3->setStretchFactor(1, 1);
 
     //将定定义的表视图和树视图放入分束器中
-    m_pVSplitter1->addWidget(m_pTableView);
-    m_pVSplitter1->addWidget(m_pHSplitter3);
-    m_pVSplitter1->setStretchFactor(0, 4);				//设置视图比例，第0列和第1列是4:7
-    m_pVSplitter1->setStretchFactor(1, 6);
-
     m_pSplitter->addWidget(m_pTreeView);
     m_pSplitter->addWidget(m_pVSplitter1);
     m_pSplitter->setStretchFactor(0, 2);				//设置视图比例，第0列和第1列是4:7
-    m_pSplitter->setStretchFactor(1, 7);
+    m_pSplitter->setStretchFactor(1, 5);
     setCentralWidget(m_pSplitter);//设置到主窗口中央
 
 
 }
 
 
-void CMainWindow::addPushButton()
-{
-    // 创建一个容器小部件，方便放入Splitter
-    m_pButtonContainer = new QWidget(this);
-    // 创建一个垂直布局并添加到容器小部件中
-    m_pVBoxLayot = new QVBoxLayout(m_pButtonContainer);
-    m_pPushButton1 = new QPushButton(this);
-    m_pPushButton1->setText("导出图片");
-    //m_pPushButton2 = new QPushButton(this);
-    m_pVBoxLayot->addWidget(m_pPushButton1);
-    //m_pVBoxLayot->addWidget(m_pPushButton2);
-
-    connect(m_pPushButton1, SIGNAL(clicked()), this, SLOT(Exportphoto()));
-
-}
-
-void CMainWindow::addTimeEdit()
-{
-    m_startTimeEdit = new QDateTimeEdit(this);
-    m_endTimeEdit = new QDateTimeEdit(this);
-    m_startTimeEdit->setDisplayFormat("yyyy-MM-dd HH:mm:ss");
-    m_endTimeEdit->setDisplayFormat("yyyy-MM-dd HH:mm:ss");
-
-    QVBoxLayout* layout = new QVBoxLayout(this);
-
-    layout->addWidget(m_startTimeEdit);
-    layout->addWidget(m_endTimeEdit);
-
-    m_pButtonContainer = new QWidget(this);
-    m_pButtonContainer->setLayout(layout);
-
-    // 连接信号和槽
-    connect(m_startTimeEdit, SIGNAL(QDateTimeEdit::dateTimeChanged()), this, SLOT(updatePlotByTimeEdit()));
-    //connect(endTimeEdit, &QDateTimeEdit::dateTimeChanged, this, SLOT(updatePlotByTimeEdit));
-
-}
-
-void CMainWindow::Exportphoto()
-{
-
-    bool ret = false;
-    ret = m_pCCustom->m_pCustomPlot->savePng("test.png", 800, 500);//导出图片
-    if (ret)
-    {
-        QMessageBox msgBox;
-        msgBox.setStyleSheet("QLabel{min-width: 300px; font-size: 24px;} QPushButton{width: 120px; font-size: 18px;}");
-        msgBox.setText("图片已成功导出！");
-        msgBox.exec();
-    }
-}
-
-void CMainWindow::updatePlotByTimeEdit()
-{
-    QDateTime startTime = m_startTimeEdit->dateTime();
-    QDateTime endTime = m_endTimeEdit->dateTime();
-
-    // 使用startTime和endTime更新你的图表
-}
-
-void CMainWindow::updateTracer(QMouseEvent* event)
-{
-    double x = m_pCCustom->m_pCustomPlot->xAxis->pixelToCoord(event->pos().x());
-    double y = m_pCCustom->m_pCustomPlot->yAxis->pixelToCoord(event->pos().y());
-
-    m_tracer->setGraphKey(x);
-    m_tracer->updatePosition();
-
-    m_textLabel->setText(QString("X: %1\nY: %2").arg(x).arg(y));
-    m_textLabel->position->setCoords(QPointF(x, y));
-    m_textLabel->setFont(QFont(font().family(), 10));
-
-    m_pCCustom->m_pCustomPlot->replot();
-}
-
 void CMainWindow::startDo(const QModelIndex& pQModel)
 {
     //获取点击项的信息
     CItemTree* pItemTree;
     pItemTree = static_cast<CItemTree*>(pQModel.internalPointer());
-    CGlobal::m_treeName = pItemTree->m_TreeName;
-    CGlobal::m_TreeType = pItemTree->m_TreeType;
-    QStringList Listheader;
+    CGlobal::m_treeName = pItemTree->m_TreeName;//给全局目录名
+    CGlobal::m_TreeType = pItemTree->m_TreeType;//给全局目录类型(STorT)
 
+
+    //点击对应作业
     if (pItemTree->m_TreeType == 1)
     {
-        //如果是超级表,存ST所有子表数据，并建立子目录
-        m_pHSplitter3->hide();
+        //如果是超级表
+        m_pChartView->hide();//隐藏绘图视图
         m_pTaos->STableDirectQueryData();
-        Listheader << QString("表名") << QString("量测名") << QString("类型");
     }
     else if (pItemTree->m_TreeType == 2)
     {
-        m_pHSplitter3->show();
+        //如果是子表
         m_pTaos->TableDirectQueryData();//读子表数据
-        Listheader << QString("时间戳") << QString("量测值");
+
+        m_pChartView->show();
+        m_pLineseries->setUseOpenGL(true);//利用显卡加速，效果不错
+
+        //测试数据
+        for (int i = 0; i < 100; i++)//用真实数据去CTaos::TableDirectQueryData取消注释
+            CTaos::m_pChartdata.append(QPointF(i, QRandomGenerator::global()->bounded(100)));//放入绘图存储区
+
+        m_pLineseries->replace(CTaos::m_pChartdata);//将数据向量赋给序列
+        m_pChart->addSeries(m_pLineseries);//将序列添加到图表中
+        m_pChart->createDefaultAxes();//创建默认的轴
+        m_pChart->setTitle("meas1");//设置图表标题
+        //m_pChartView->setRenderHint(QPainter::Antialiasing);//设置抗锯齿渲染提示
         
 
-        // 假设你的QCustomPlot对象名为customPlot
-        m_tracer = new QCPItemTracer(m_pCCustom->m_pCustomPlot);
-        m_tracer->setStyle(QCPItemTracer::tsCrosshair);
-
-        m_textLabel = new QCPItemText(m_pCCustom->m_pCustomPlot);
-        m_textLabel->setPositionAlignment(Qt::AlignTop | Qt::AlignHCenter);
-
-        connect(m_pCCustom->m_pCustomPlot, SIGNAL(mouseMove(QMouseEvent*)), this, SLOT(updateTracer(QMouseEvent*)));
-        //自定义的类中绘制绘图所需图像
-        m_pCCustom->Draw();
     }
 
-    m_pTableModel->setheader(Listheader);
-    m_pTableView->setModel(m_pTableModel);//表格模型放入视图
-    m_pTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);//自动设置列宽
+    
+    m_pTableModel->SetHeader();//添加表格头部
+    //m_pTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);//自动设置字宽的列宽
     //刷新窗口，只刷新修改的数据
     //m_pTableView->viewport()->update();//Qt4版本，此版本不适用
-    m_pTableModel->hasChanged();
+    m_pTableModel->hasChanged();//刷新界面
 
 
 }

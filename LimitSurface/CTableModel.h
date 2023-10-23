@@ -15,6 +15,7 @@ public:
 public:
 	void hasChanged();
 	void setheader(QStringList &);
+	void SetHeader();
 
 	//表格方式的行列
 	virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;

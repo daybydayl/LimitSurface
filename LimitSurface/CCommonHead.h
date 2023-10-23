@@ -4,16 +4,14 @@
 #define CCOMMONHEAD_H
 
 #include "C:\TDengine\include\taos.h"
-//#include <QtGui/QtGui>
-//#include <QtCore/QtCore>
 #include <QtCore>
 
-////包含网络子系统头文件
-//#include "D:/rr6000/src/vc/include/dnet_all.h"
-////包含历史库子系统头文件
-//#include "D:/rr6000/src/vc/include/hds_all.h"
-////包含实时库子系统头文件
-//#include "D:/rr6000/src/vc/include/rdb_all.h"
+//包含网络子系统头文件
+#include "D:/rr6000/src/vc/include/dnet_all.h"
+//包含历史库子系统头文件
+#include "D:/rr6000/src/vc/include/hds_all.h"
+//包含实时库子系统头文件
+#include "D:/rr6000/src/vc/include/rdb_all.h"
 
 
 #endif

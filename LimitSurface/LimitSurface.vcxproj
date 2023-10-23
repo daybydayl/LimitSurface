@@ -68,7 +68,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Link>
-      <AdditionalDependencies>taos.lib;Qt5Cored.lib;Qt5Guid.lib;qtmaind.lib;dnet_v2.lib;dbms_d_v2.lib;hds_common_dll.lib;Qt5PrintSupportd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>taos.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5Chartsd.lib;qtmaind.lib;dnet_v2.lib;dbms_d_v2.lib;hds_common_dll.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ClCompile>
       <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -99,13 +99,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CChartView.cpp" />
     <ClCompile Include="CDelegateEdit.cpp" />
     <ClCompile Include="CTaosMeasTag.cpp" />
-    <ClCompile Include="qcustomplot.cpp" />
     <QtRcc Include="CMainWindow.qrc" />
     <QtUic Include="CMainWindow.ui" />
     <QtMoc Include="CMainWindow.h" />
-    <ClCompile Include="CCustomPlot.cpp" />
     <ClCompile Include="CGlobal.cpp" />
     <ClCompile Include="CItemTree.cpp" />
     <ClCompile Include="CMainWindow.cpp" />
@@ -118,8 +117,8 @@
     <ResourceCompile Include="LimitSurface.rc" />
   </ItemGroup>
   <ItemGroup>
+    <QtMoc Include="CChartView.h" />
     <ClInclude Include="CCommonHead.h" />
-    <ClInclude Include="CCustomPlot.h" />
     <ClInclude Include="CDelegateEdit.h" />
     <ClInclude Include="CGlobal.h" />
     <ClInclude Include="CItemTree.h" />
@@ -128,7 +127,6 @@
     <ClInclude Include="CTaosMeasTable.h" />
     <ClInclude Include="CTaosMeasTag.h" />
     <ClInclude Include="CTreeModel.h" />
-    <QtMoc Include="qcustomplot.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

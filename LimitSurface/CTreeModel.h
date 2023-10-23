@@ -2,9 +2,6 @@
 #ifndef CTREEMODEL_H
 #define CTREEMODEL_H
 
-
-
-
 #include "CCommonHead.h"
 #include "CItemTree.h"
 #include "CGlobal.h"

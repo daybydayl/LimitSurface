@@ -6,8 +6,6 @@
 #include "CTaosMeasTag.h"
 #include "CGlobal.h"
 
-#include "CCustomPlot.h"
-
 class CTaos
 {
 public:
@@ -19,7 +17,7 @@ public:
 	static void Exitinstance();						//退出实例
 	void Init();									//初始化
 
-public:
+public://自定义
 	int Syn_executeSQL(TAOS* taos, const char* sql);//执行操作语句更好
 	//自封装的通过一条 查询sql语句，获取对应结构数据
 	// 
@@ -30,8 +28,6 @@ public:
 	void TableDirectQueryData();//直接读子表
 
 	void STableDirectQueryData();//读超级表tag
-
-	void test();
 
 	void ReadSTTree();
 
@@ -55,6 +51,9 @@ public:
 	static QList<CTaosMeasTable*>					m_listMeasTableNode;//子表接收的数据
 	static QMap<QString, QList<CTaosMeasTable*>>	m_MeasMapTNtoList;//接收taos量测结点链表,子表名和数据
 	static QMap<QString, QMap<QString, QList<CTaosMeasTable*>>> m_MeasMapSTNtoList;//接收超级表命，子表名和数据
+
+	//QChart绘图变量
+	static QVector<QPointF> m_pChartdata;	//QVector<QPointF>对象来存储数据(x,y)
 	
 };
 											
