@@ -1,4 +1,7 @@
 #pragma once
+#ifndef CGLOBAL_H
+#define CGLOABL_H
+
 #include "CCommonHead.h"
 #include "CTaos.h"
 
@@ -36,4 +39,6 @@ public:
 	static QString	m_treeName;						//目录名(表名)，用来存对应记录数据，通过QMap这个做key
 	static QString	m_TreeType;						//目录类型，用来区分读哪种表
 };
+
+#endif // !CGLOBAL_H
 

@@ -1,5 +1,7 @@
 #pragma once
-#include "CCommonHead.h"
+#ifndef CTAOS_H
+#define CTAOS_H
+
 #include "CTaosMeasTable.h"
 #include "CTaosMeasTag.h"
 #include "CGlobal.h"
@@ -56,3 +58,4 @@ public:
 	
 };
 											
+#endif // ! CTAOS_H

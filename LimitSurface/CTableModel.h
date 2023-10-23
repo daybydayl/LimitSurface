@@ -1,5 +1,7 @@
 #pragma once
-#include "CCommonHead.h"
+#ifndef CTABLEMODEL_H
+#define CTABLEMODEL_H
+
 #include "CTaos.h"
 #include "CGlobal.h"
 #include "CTaosMeasTable.h"
@@ -33,4 +35,4 @@ public:
 	QStringList		m_Listheader;
 
 };
-
+#endif // !CTABLEMODEL_H

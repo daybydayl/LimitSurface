@@ -1,4 +1,7 @@
 #pragma once
+#ifndef CDELEGATEEDIT_H
+#define CDELEGATEEDIT_H
+
 #include "CCommonHead.h"
 #include <QtWidgets/QItemDelegate>
 #include <QtWidgets/QLineEdit>
@@ -20,4 +23,4 @@ public:
     void updateEditorGeometry(QWidget* editor,const QStyleOptionViewItem& option,const QModelIndex& index) const;
 
 };
-
+#endif // !CDELEGATE_H

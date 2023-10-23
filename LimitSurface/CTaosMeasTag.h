@@ -1,4 +1,7 @@
 #pragma once
+#ifndef CTAOSMEASTAG_H
+#define CTAOSMEASTAG_H
+
 #include "CCommonHead.h"
 class CTaosMeasTag
 {
@@ -24,4 +27,4 @@ private:
 	bool	m_IfUse;//对象池中对象是否占用
 	
 };
-
+#endif // !CTAOSMEASTAG_H

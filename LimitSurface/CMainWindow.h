@@ -1,15 +1,15 @@
 #pragma once
+#ifndef CMAINWINDOW_H
+#define CMAINWINDOW_H
 
-#include <QtWidgets/QMainWindow>
-#include "ui_CMainWindow.h"
+//#include <QtWidgets/QMainWindow>
+//#include "ui_CMainWindow.h"
 
-#include "CCommonHead.h"
-#include <QTableView>
-#include <QTreeView>
-#include <QSplitter>
+//#include <QTableView>
+//#include <QTreeView>
+//#include <QSplitter>
 #include "CTableModel.h"
 #include "CTreeModel.h"
-#include "CItemTree.h"
 
 #include "CCustomPlot.h"
 
@@ -76,3 +76,4 @@ private:
 
 
 };
+#endif // !CMAINWINDOW_H

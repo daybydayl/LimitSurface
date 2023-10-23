@@ -1,4 +1,9 @@
 #pragma once
+#ifndef CTREEMODEL_H
+#define CTREEMODEL_H
+
+
+
 
 #include "CCommonHead.h"
 #include "CItemTree.h"
@@ -50,3 +55,4 @@ private:
 	static QList<CItemTree*>	m_listPoolItemTree;	//∂‘œÛ≥ÿ
 };
 
+#endif // ! CTREEMODEL_H
