@@ -2,6 +2,8 @@
 #include "CItemTree.h"
 #include "CGlobal.h"
 
+#include <QtWidgets/QHeaderView>
+
 
 CMainWindow::CMainWindow(QWidget* parent)
     : QMainWindow(parent)
@@ -67,7 +69,7 @@ void CMainWindow::startDo(const QModelIndex& pQModel)
         m_pTaos->TableDirectQueryData();//读子表数据
     }
 
-    m_pTableModel.SetHeader();
+    m_pTableModel->SetHeader();
     m_pTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);//自动设置列宽
     //刷新窗口，只刷新修改的数据
     //m_pTableView->viewport()->update();//Qt4版本，此版本不适用

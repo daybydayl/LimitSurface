@@ -119,11 +119,7 @@ int CTaos::taos_analysis_row(TAOS_ROW row, TAOS_FIELD* fields, int num_fields)
 	}
 
 
-	//Customplot，给数据线填数据
-	//CCustomPlot::m_Xtime.push_back(pointnum++);
-	int Xnum = pTaosMeasTable->m_ts;
-	CCustomPlot::m_Xtime.push_back(Xnum);
-	CCustomPlot::m_Yvalue.push_back(pTaosMeasTable->m_value);
+	/*==========数据其他操作==========*/
 
 	return offset;
 }
@@ -159,8 +155,6 @@ void CTaos::TableDirectQueryData()
 	//CTaosMeasTable::resetMeasPool();//清楚对象池
 	m_listMeasTableNode.clear();//单个子表链表数据清空
 	m_MeasMapTNtoList[CGlobal::m_treeName].clear();//map子表集链表清空
-	CCustomPlot::m_Xtime.clear();
-	CCustomPlot::m_Yvalue.clear();
 
 	TAOS_RES* res = NULL;								//查询的结果集
 	TAOS_ROW data_row = NULL;							//一条记录的结果数据
@@ -213,22 +207,12 @@ void CTaos::TableDirectQueryData()
 			m_listMeasTableNode.append(pTaosMeasTable);
 			m_MeasMapTNtoList.insert(CGlobal::m_treeName, m_listMeasTableNode);
 		}
-		//Customplot，给数据线填数据
-		//CCustomPlot::m_Xtime.push_back(pointnum++);
-		CCustomPlot::m_Xtime.push_back(xAis/1000);
-		CCustomPlot::m_Yvalue.push_back(pTaosMeasTable->m_value);
+		
+		/*==============数据其他操作=================*/
+
 	}
 
-	/*int offset = 0;
-	int ret = 0;
-	ret = taos_fetch_block(res, data_rows);//block不会解析
-	for (int i = 0; i < ret; i++)
-	{
-		taos_analysis_row(data_rows[i], taosfields_info, fields_num);
-	}*/
 
-	
-	
 
 }
 
@@ -288,138 +272,6 @@ void CTaos::STableDirectQueryData()
 	
 }
 
-void CTaos::test()
-{
-	CTaosMeasTable::resetMeasPool();//清楚对象池
-	m_listMeasTableNode.clear();
-	m_MeasMapTNtoList[CGlobal::m_treeName].clear();
-	CCustomPlot::m_Xtime.clear();
-	CCustomPlot::m_Yvalue.clear();
-
-	TAOS_RES* res = NULL;								//查询的结果集
-	TAOS_ROW data_row = NULL;								//一条记录的结果数据
-	int records_num = 0;										//查询结果的记录条数
-	QString str = "select * from rr6000.";
-	str.append(CGlobal::m_treeName);
-	str.append(" limit 10000");
-
-	res = taos_query(m_taos, str.toStdString().c_str());
-
-	int fields_num = taos_field_count(res);				//查询表的域个数，等同taos_num_fields
-	TAOS_FIELD* taosfields_info = taos_fetch_fields(res);		//域结构信息
-
-	//返回结果集时间戳字段的精度，0 代表毫秒，1 代表微秒，2 代表纳秒。
-	int time_pre = taos_result_precision(res);
-
-	//字串截取
-	/*char* subchar;
-	char split = ' ';
-	QString mid;*/
-
-	//将毫秒转成时间
-	char curDate[64];
-	time_t curtime;
-	struct tm* tminfo;//C++自带
-
-	QString last3B_ts;//接收后三位毫秒时间
-	QString ts;//临时接收一条记录的时间戳
-	QString value;//临时接收一条记录的量测值
-	QString measname_tag;
-	QString meastype_tag;
-	CTaosMeasTable* pTaosMeasTable;//接收转换后的类数据
-
-	double pointnum = 0;
-	while ((data_row = taos_fetch_row(res))) {				//按行获取查询结果集中的数据。
-		char temp[1024] = { 0 };
-		taos_print_row(temp, data_row, taosfields_info, fields_num);	//官方解析一条记录输出
-		records_num++;
-
-		pTaosMeasTable = CTaosMeasTable::getMeasNodebyPool();
-
-		last3B_ts.clear();
-		ts.clear();
-		value.clear();//清空临时接收的变量
-		measname_tag.clear();
-		meastype_tag.clear();
-
-	
-		/*subchar = strtok(temp, &split);//字串截取
-		pTaosMeasTable->m_date = subchar;
-		mid = strtok(NULL, &split);
-		pTaosMeasTable->m_value = mid.toDouble();*/
-	
-
-		int flag = 1;//用来判断取出哪部分数据
-		for (int i = 0; temp[i] != 0; i++)
-		{
-			if (1 == flag)//取时间戳
-			{
-				if (temp[i] != ' ')
-					ts.append(temp[i]);
-				else
-				{
-					flag = 2;//检测到空格，该取下一个数据
-					last3B_ts.append(temp[i - 3]);//取后三位的毫秒
-					last3B_ts.append(temp[i - 2]);
-					last3B_ts.append(temp[i - 1]);
-				}
-			}
-			else if (2 == flag)
-			{
-				if (temp[i] != ' ')
-					value.append(temp[i]);
-				else
-					flag = 3;
-			}
-			else if (3 == flag)
-			{
-				if (temp[i] != ' ')
-					measname_tag.append(temp[i]);
-				else
-					flag = 4;
-			}
-			else if (4 == flag)
-			{
-				if (temp[i] != ' ')
-					meastype_tag.append(temp[i]);
-
-			}
-				
-		}
-		pTaosMeasTable = CTaosMeasTable::getMeasNodebyPool();
-		pTaosMeasTable->m_ts = ts.toDouble();
-		//将毫秒转成时间
-		char curDate[64];
-		time_t curtime;
-		struct tm* tminfo;//C++自带
-		curtime = pTaosMeasTable->m_ts/1000;
-		tminfo = localtime(&curtime);//将的得到时间转成结构体tm类型
-		strftime(curDate, 64, "%Y-%m-%d %H:%M:%S", tminfo);//把tm结构体已模型放入字符串中
-		pTaosMeasTable->m_date = curDate;
-		pTaosMeasTable->m_date.append(".");
-		pTaosMeasTable->m_date.append(last3B_ts);
-		pTaosMeasTable->m_value = value.toDouble();
-
-	
-
-		if (m_MeasMapTNtoList.contains(CGlobal::m_treeName))
-			m_MeasMapTNtoList[CGlobal::m_treeName].append(pTaosMeasTable);
-		else
-		{
-			m_listMeasTableNode.append(pTaosMeasTable);
-			m_MeasMapTNtoList.insert(CGlobal::m_treeName, m_listMeasTableNode);
-		}
-	
-		//Customplot，给数据线填数据
-		CCustomPlot::m_Xtime.push_back(pointnum++);
-		CCustomPlot::m_Yvalue.push_back(pTaosMeasTable->m_value);
-	
-	
-	}
-
-			/*按表名存储，数据重复存放，待优化*/
-}
-
 void CTaos::ReadSTTree()
 {
 	//定义建立超表目录的接收信息
@@ -476,36 +328,6 @@ void CTaos::ReadSTTree()
 			}
 		}
 
-	}
-
-}
-
-void CTaos::ReadTTree()
-{
-	//CTreeModel::m_mapTree.clear();
-
-	TAOS_RES* res = NULL;								//查询的结果集
-	TAOS_ROW data_row = NULL;							//一条记录的结果数据
-	int records_num = 0;								//查询结果的记录条数
-	QString str = "show table tags tbname from rr6000.";
-	str.append(CGlobal::m_treeName);
-
-	res = taos_query(m_taos, str.toStdString().c_str());
-
-	int fields_num = taos_field_count(res);				//查询表的域个数，等同taos_num_fields
-	TAOS_FIELD* taosfields_info = taos_fetch_fields(res);		//域结构信息
-
-
-	while ((data_row = taos_fetch_row(res))) {				//按行获取查询结果集中的数据。
-		char temp[1024] = { 0 };
-		taos_print_row(temp, data_row, taosfields_info, fields_num);	//官方解析一条记录输出
-		records_num++;
-
-		CItemTree* pItemTree = CTreeModel::getItemTreebyPool();
-
-		pItemTree->m_TreeName = temp;
-		pItemTree->m_TreeType = 2;
-		//CTreeModel::m_mapTree.append(pItemTree);
 	}
 
 }

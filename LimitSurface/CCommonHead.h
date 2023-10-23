@@ -4,6 +4,3 @@
 #include "C:\TDengine\include\taos.h"
 #include <QtGui/QtGui>
 
-
-//#include <QtCore/QtCore>
-

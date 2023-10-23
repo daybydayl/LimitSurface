@@ -16,7 +16,7 @@ public:
 	static void Exitinstance();						//退出实例
 	void Init();									//初始化
 
-public:
+public://自定义
 	int Syn_executeSQL(TAOS* taos, const char* sql);//执行操作语句更好
 	//自封装的通过一条 查询sql语句，获取对应结构数据
 	// 
@@ -28,11 +28,7 @@ public:
 
 	void STableDirectQueryData();//读超级表tag
 
-	void test();
-
 	void ReadSTTree();
-
-	void ReadTTree();
 
 
 public:

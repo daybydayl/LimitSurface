@@ -23,21 +23,9 @@ public:
 public:
     void initComponent();//初始化界面布局和类对象
 
-    void addPushButton();//添加1按钮
-    void addTimeEdit();//添加时间区间编辑控件
-
 protected slots:
     //目录点击的进出表函数
     void startDo(const QModelIndex&);
-
-    //导出绘图图片槽函数
-    void Exportphoto();
-
-    //更新时间区间刷新
-    void updatePlotByTimeEdit();
-
-    //指针选中显示值
-    void updateTracer(QMouseEvent*);
 
 
 private:
