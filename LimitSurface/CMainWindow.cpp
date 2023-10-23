@@ -34,11 +34,13 @@ void CMainWindow::initComponent()
     //Table,将定义的表模型放入表视图中，并且resize行列的宽度
     m_pTableModel = new CTableModel(this);
     m_pTableView = new QTableView(this);
+    m_pTableView->setModel(m_pTableModel);//表格模型放入视图
     m_pCCustom = CCustomPlot::intoinstance();//通过自定义的对象获取QCustomPlot绘制
     
     m_pSplitter = new QSplitter(Qt::Horizontal, this);
     m_pVSplitter1 = new QSplitter(Qt::Vertical, this);	//分束器，两部分，这里水平
     m_pHSplitter3 = new QSplitter(Qt::Horizontal, this);
+
 
 
     addPushButton();
@@ -145,20 +147,18 @@ void CMainWindow::startDo(const QModelIndex& pQModel)
     pItemTree = static_cast<CItemTree*>(pQModel.internalPointer());
     CGlobal::m_treeName = pItemTree->m_TreeName;
     CGlobal::m_TreeType = pItemTree->m_TreeType;
-    QStringList Listheader;
 
+    //点击对应作业
     if (pItemTree->m_TreeType == 1)
     {
         //如果是超级表,存ST所有子表数据，并建立子目录
         m_pHSplitter3->hide();
         m_pTaos->STableDirectQueryData();
-        Listheader << QString("表名") << QString("量测名") << QString("类型");
     }
     else if (pItemTree->m_TreeType == 2)
     {
         m_pHSplitter3->show();
         m_pTaos->TableDirectQueryData();//读子表数据
-        Listheader << QString("时间戳") << QString("量测值");
         
 
         // 假设你的QCustomPlot对象名为customPlot
@@ -173,8 +173,7 @@ void CMainWindow::startDo(const QModelIndex& pQModel)
         m_pCCustom->Draw();
     }
 
-    m_pTableModel->setheader(Listheader);
-    m_pTableView->setModel(m_pTableModel);//表格模型放入视图
+    m_pTableModel->SetHeader();
     m_pTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);//自动设置列宽
     //刷新窗口，只刷新修改的数据
     //m_pTableView->viewport()->update();//Qt4版本，此版本不适用
