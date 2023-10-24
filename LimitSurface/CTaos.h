@@ -1,4 +1,7 @@
 #pragma once
+#ifndef CTAOS_H
+#define CTAOS_H
+
 #include "CCommonHead.h"
 #include "CTaosMeasTable.h"
 #include "CTaosMeasTag.h"
@@ -50,4 +53,5 @@ public:
 	static QMap<QString, QMap<QString, QList<CTaosMeasTable*>>> m_MeasMapSTNtoList;//接收超级表命，子表名和数据
 	
 };
-											
+
+#endif // ! CTAOS_H									

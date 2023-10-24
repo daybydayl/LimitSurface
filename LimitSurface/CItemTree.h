@@ -1,4 +1,7 @@
 #pragma once
+#ifndef CITEMTREE_H
+#define CITEMTREE_H
+
 #include "CCommonHead.h"
 #include <QAbstractItemView>
 class CItemTree
@@ -42,3 +45,4 @@ public:
 	QList<CItemTree*>	m_listChild;	//º¢×ÓÄ¿Â¼Á´±í
 };
 
+#endif // !CITEMTREE_H

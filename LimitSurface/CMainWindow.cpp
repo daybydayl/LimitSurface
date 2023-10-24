@@ -67,6 +67,7 @@ void CMainWindow::startDo(const QModelIndex& pQModel)
     {
         //如果是子表
         m_pTaos->TableDirectQueryData();//读子表数据
+        
     }
 
     m_pTableModel->SetHeader();

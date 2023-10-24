@@ -1,4 +1,7 @@
 #pragma once
+#ifndef CTABLEMODEL_H
+#define CTABLEMODEL_H
+
 #include "CCommonHead.h"
 #include "CTaos.h"
 #include "CGlobal.h"
@@ -27,3 +30,4 @@ public:
 
 };
 
+#endif // !CTABLEMODEL_H

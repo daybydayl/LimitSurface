@@ -1,4 +1,8 @@
 #pragma once
+#ifndef CTAOSMEASTABLE_H
+#define CTAOSMEASTABLE_H
+
+
 #include "CCommonHead.h"
 class CTaosMeasTable
 {
@@ -25,4 +29,6 @@ public:
 	static QList<CTaosMeasTable*>			m_listPoolMeasNode;
 	bool	m_IfUse;//对象池中对象是否占用
 };
+
+#endif // !CTAOSMEASTABLE_H
 

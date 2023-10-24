@@ -1,4 +1,7 @@
 #pragma once
+#ifndef CGLOBAL_H
+#define	CGLOBAL_H
+
 #include "CCommonHead.h"
 #include "CTaos.h"
 
@@ -37,3 +40,4 @@ public:
 	static QString	m_TreeType;						//目录类型，用来区分读哪种表
 };
 
+#endif // !CGLOBAL_H

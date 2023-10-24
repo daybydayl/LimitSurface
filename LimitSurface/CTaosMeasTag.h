@@ -1,4 +1,7 @@
 #pragma once
+#ifndef CTAOSMEASTAG_H
+#define CTAOSMEASTAG_H
+
 #include "CCommonHead.h"
 class CTaosMeasTag
 {
@@ -25,3 +28,4 @@ private:
 	
 };
 
+#endif // !CTAOSMEASTAG_H
